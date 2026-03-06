@@ -133,3 +133,10 @@ inputBuscar.addEventListener('input', () => {
     applyFilters();
 });
 
+// boton de limpiar
+const btnLimpiar = $('#btnLimpiarBuscar');
+btnLimpiar.addEventListener('click', () => {
+    inputBuscar.value = '';
+    filterState.text = '';
+    applyFilters();
+});
