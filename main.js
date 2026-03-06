@@ -42,12 +42,26 @@ form.addEventListener('submit', (e) => {
 
 const listaArticulos = $('#listaTareas');
 
-// evento que escucha los clicks en la lista de articulos, si el click es en un boton de eliminar, obtiene la tarjeta mas cercana y la elimina
+// evento que escucha los clicks en la lista de articulos, 
 listaArticulos.addEventListener('click', (e) => {
-
-    const btn = e.target.closest('button[data-action="del"]');
+    const btn = e.target.closest('button[data-action]');
     if(!btn) return;
-
+    
+    const action = btn.dataset.action;
     const card = btn.closest('.card');
-    card.remove();
+    // si el click es en un boton de eliminar, obtiene la tarjeta mas cercana y la elimina
+    if(action === 'del') {
+        card.remove();
+    }else if(action === 'fav'){
+        // si elclick es fav, marca las estrellas
+        const btnLike = btn;
+        btn.classList.toggle('active');{
+            if(!btnLike) return;
+            if(btnLike.classList.contains('active')){
+                btnLike.textContent = '★';
+            }else{
+                btnLike.textContent = '☆';
+            }
+        }
+    }
 });
