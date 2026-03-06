@@ -67,3 +67,49 @@ listaArticulos.addEventListener('click', (e) => {
     }
 
 });
+
+// evento que escucha los clicks, muestra las tarjetas correspondientes al filtro
+const filtros = $('.filters');
+// console.log(filtros);
+filtros.addEventListener('click', (e) => {
+    const filter = e.target.closest('button[data-filter]'); 
+    if(!filter) return;
+
+    const filterValue = filter.dataset.filter;
+    const cards = $$('.card', listaTareas);
+    let estaVisible = false;
+
+    cards.forEach(card => {
+
+        const favorito = card.querySelector('.icon[data-action="fav"]');
+
+        // filtra todos
+        if(filterValue === 'all'){
+            card.classList.remove('is-hidden');
+            estaVisible = true;
+
+        // filtra fav
+        }else if(filterValue === 'fav'){
+            if(favorito.classList.contains('active')){
+                card.classList.remove('is-hidden');
+                estaVisible = true;
+            }else{
+                card.classList.add('is-hidden');
+            }
+
+        // filtra los otro casos
+        }else if(card.dataset.tag === filterValue){
+            card.classList.remove('is-hidden');
+            estaVisible = true;
+
+        }else{
+            card.classList.add('is-hidden');
+        }
+
+    });
+
+    // agregar o remover class de estilos
+    $$('.filters button').forEach(btn => btn.classList.remove('is-active'));
+    filter.classList.add('is-active');
+    $('#emptyState').classList.toggle('is-active', estaVisible);
+});
