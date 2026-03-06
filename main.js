@@ -37,6 +37,9 @@ form.addEventListener('submit', (e) => {
     const buildedList = buildItem({title, type});
     listaTareas.appendChild(buildedList);
     form.reset();
+
+    // aplicar filtros si se agrega tarea
+    applyFilters();
 });
 
 
@@ -68,48 +71,65 @@ listaArticulos.addEventListener('click', (e) => {
 
 });
 
-// evento que escucha los clicks, muestra las tarjetas correspondientes al filtro
+// // evento que escucha los clicks, muestra las tarjetas correspondientes al filtro
 const filtros = $('.filters');
-// console.log(filtros);
-filtros.addEventListener('click', (e) => {
-    const filter = e.target.closest('button[data-filter]'); 
-    if(!filter) return;
+// // console.log(filtros);
+const filterState = {
+    text: '',
+    tag: 'all'
+    // fav: false
+};
 
-    const filterValue = filter.dataset.filter;
+// texto funcion que compara el texto del titulo de la tarjeta con el texto del filtro, regresa true si coincide
+const matchText = (card, text) => {
+    const title = card.querySelector('.card__title')?.textContent.toLowerCase() ?? '';
+    return title.includes(text);
+};
+
+
+const matchTag = (card, tag) => {
+    if(tag === 'all') return true;
+
+    if(tag === 'fav'){
+        const favBtn = card.querySelector('[data-action="fav"]');
+        return favBtn.classList.contains('active');
+    }
+    const cardTag = card.dataset.tag.toLowerCase();
+    return cardTag === tag;
+};
+
+const applyFilters = () => {
     const cards = $$('.card', listaTareas);
-    let estaVisible = false;
+    let visible = false;
 
     cards.forEach(card => {
+        const okText = filterState.text === '' || matchText(card, filterState.text);
+        const okTag = matchTag(card, filterState.tag);
+        const show = okText && okTag;
 
-        const favorito = card.querySelector('.icon[data-action="fav"]');
-
-        // filtra todos
-        if(filterValue === 'all'){
-            card.classList.remove('is-hidden');
-            estaVisible = true;
-
-        // filtra fav
-        }else if(filterValue === 'fav'){
-            if(favorito.classList.contains('active')){
-                card.classList.remove('is-hidden');
-                estaVisible = true;
-            }else{
-                card.classList.add('is-hidden');
-            }
-
-        // filtra los otro casos
-        }else if(card.dataset.tag === filterValue){
-            card.classList.remove('is-hidden');
-            estaVisible = true;
-
-        }else{
-            card.classList.add('is-hidden');
-        }
-
+        card.classList.toggle('is-hidden', !show);
+        if(show) visible = true;
     });
+    $('#emptyState').classList.toggle('is-hidden', visible);
+};
 
-    // agregar o remover class de estilos
-    $$('.filters button').forEach(btn => btn.classList.remove('is-active'));
-    filter.classList.add('is-active');
-    $('#emptyState').classList.toggle('is-active', estaVisible);
+// evento de los botones de filtro
+filtros.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-filter]');
+    if(!btn) return;
+
+    filterState.tag = btn.dataset.filter;
+    $$('.filters button').forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+
+    applyFilters();
+
 });
+
+// evento del input de filtro por texto
+const inputBuscar = $('#inputBuscar');
+inputBuscar.addEventListener('input', () => {
+    filterState.text = inputBuscar.value.trim().toLowerCase();
+    applyFilters();
+});
+
