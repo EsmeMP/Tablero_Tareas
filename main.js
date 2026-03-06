@@ -40,6 +40,9 @@ form.addEventListener('submit', (e) => {
 
     // aplicar filtros si se agrega tarea
     applyFilters();
+
+    // actualizar estadisticas
+    updateStats();
 });
 
 
@@ -55,9 +58,12 @@ listaArticulos.addEventListener('click', (e) => {
     // si el click es en un boton de eliminar, obtiene la tarjeta mas cercana y la elimina
     if(action === 'del') {
         card.remove();
+        // actualizar estadisticas
+        updateStats();
     }else if(action === 'fav'){
         // si elclick es fav, marca las estrellas
         btn.classList.toggle('active');{
+            updateStats();
             if(btn.classList.contains('active')){
                 btn.textContent = '★';
             }else{
@@ -111,6 +117,7 @@ const applyFilters = () => {
         if(show) visible = true;
     });
     $('#emptyState').classList.toggle('is-hidden', visible);
+    updateStats();
 };
 
 // evento de los botones de filtro
@@ -140,3 +147,24 @@ btnLimpiar.addEventListener('click', () => {
     filterState.text = '';
     applyFilters();
 });
+
+const updateStats = () => {
+
+    const cards = $$('.card', listaTareas);
+
+    const total = cards.length;
+
+    const visibles = cards.filter(card => 
+        !card.classList.contains('is-hidden')
+    ).length;
+
+    const favs = cards.filter(card => {
+        const favBtn = card.querySelector('[data-action="fav"]');
+        return favBtn.classList.contains('active');
+    }).length;
+
+    $('#statTotal').textContent = total;
+    $('#statVisibles').textContent = visibles;
+    $('#statFavs').textContent = favs;
+
+};
