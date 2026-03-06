@@ -54,14 +54,16 @@ listaArticulos.addEventListener('click', (e) => {
         card.remove();
     }else if(action === 'fav'){
         // si elclick es fav, marca las estrellas
-        const btnLike = btn;
         btn.classList.toggle('active');{
-            if(!btnLike) return;
-            if(btnLike.classList.contains('active')){
-                btnLike.textContent = '★';
+            if(btn.classList.contains('active')){
+                btn.textContent = '★';
             }else{
-                btnLike.textContent = '☆';
+                btn.textContent = '☆';
             }
         }
+        // marca como completada con la clase
+    }else if(action === 'done'){
+        card.classList.toggle('is-done');
     }
+
 });
