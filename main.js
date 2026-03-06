@@ -39,4 +39,15 @@ form.addEventListener('submit', (e) => {
     form.reset();
 });
 
-// const btnLimpiar = $('#btnLimpiar');
+
+const listaArticulos = $('#listaTareas');
+
+// evento que escucha los clicks en la lista de articulos, si el click es en un boton de eliminar, obtiene la tarjeta mas cercana y la elimina
+listaArticulos.addEventListener('click', (e) => {
+
+    const btn = e.target.closest('button[data-action="del"]');
+    if(!btn) return;
+
+    const card = btn.closest('.card');
+    card.remove();
+});
