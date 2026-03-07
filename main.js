@@ -42,14 +42,13 @@ form.addEventListener('submit', (e) => {
     applyFilters();
 
     // actualizar estadisticas
-    updateStats();
+    // updateStats();
 });
 
 
-const listaArticulos = $('#listaTareas');
 
 // evento que escucha los clicks en la lista de articulos, 
-listaArticulos.addEventListener('click', (e) => {
+listaTareas.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-action]');
     if(!btn) return;
     
@@ -59,22 +58,24 @@ listaArticulos.addEventListener('click', (e) => {
     if(action === 'del') {
         card.remove();
         // actualizar estadisticas
-        updateStats();
+        applyFilters();
+
     }else if(action === 'fav'){
         // si elclick es fav, marca las estrellas
         btn.classList.toggle('active');{
-            updateStats();
+            // updateStats();
             if(btn.classList.contains('active')){
                 btn.textContent = '★';
             }else{
                 btn.textContent = '☆';
             }
+            applyFilters();
         }
         // marca como completada con la clase
     }else if(action === 'done'){
         card.classList.toggle('is-done');
+        applyFilters();
     }
-
 });
 
 // // evento que escucha los clicks, muestra las tarjetas correspondientes al filtro
@@ -117,6 +118,7 @@ const applyFilters = () => {
         if(show) visible = true;
     });
     $('#emptyState').classList.toggle('is-hidden', visible);
+    // actualizar estadisticas
     updateStats();
 };
 
@@ -148,23 +150,26 @@ btnLimpiar.addEventListener('click', () => {
     applyFilters();
 });
 
+// funcion para estadisticas (total, visibles y favoritos)
 const updateStats = () => {
-
     const cards = $$('.card', listaTareas);
-
-    const total = cards.length;
-
-    const visibles = cards.filter(card => 
+    const visibles = cards.filter(card =>
         !card.classList.contains('is-hidden')
-    ).length;
-
-    const favs = cards.filter(card => {
+    );
+    const favs = visibles.filter(card => {
         const favBtn = card.querySelector('[data-action="fav"]');
         return favBtn.classList.contains('active');
-    }).length;
+    });
 
-    $('#statTotal').textContent = total;
-    $('#statVisibles').textContent = visibles;
-    $('#statFavs').textContent = favs;
-
+    $('#statTotal').textContent = cards.length;
+    $('#statVisibles').textContent = visibles.length;
+    $('#statFavs').textContent = favs.length;
 };
+
+// inicializa la aplicacion, aplica los filtros y actualiza las estadisticas
+const init = () => {
+    applyFilters();
+};
+
+init();
+
